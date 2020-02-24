@@ -6,6 +6,8 @@ import * as imagesLoaded from 'imagesloaded'
 
 import './styles.css'
 import './index.html'
+import fragmentShader from './shaders/fragment.glsl'
+import vertexShader from './shaders/vertex.glsl'
 
 Number.prototype.map = function(in_min, in_max, out_min, out_max) {
   return ((this - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min
@@ -256,43 +258,8 @@ class RGBShiftEffect extends EffectShell {
     }
     this.material = new THREE.ShaderMaterial({
       uniforms: this.uniforms,
-      vertexShader: `
-        uniform vec2 uOffset;
-
-        varying vec2 vUv;
-
-        vec3 deformationCurve(vec3 position, vec2 uv, vec2 offset) {
-          float M_PI = 3.1415926535897932384626433832795;
-          position.x = position.x + (sin(uv.y * M_PI) * offset.x);
-          position.y = position.y + (sin(uv.x * M_PI) * offset.y);
-          return position;
-        }
-
-        void main() {
-          vUv = uv;
-          vec3 newPosition = position;
-          newPosition = deformationCurve(position,uv,uOffset);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
-        }
-      `,
-      fragmentShader: `
-        uniform sampler2D uTexture;
-        uniform float uAlpha;
-        uniform vec2 uOffset;
-
-        varying vec2 vUv;
-
-        vec3 rgbShift(sampler2D texture, vec2 uv, vec2 offset) {
-          float r = texture2D(uTexture,vUv + uOffset).r;
-          vec2 gb = texture2D(uTexture,vUv).gb;
-          return vec3(r,gb);
-        }
-
-        void main() {
-          vec3 color = rgbShift(uTexture,vUv,uOffset);
-          gl_FragColor = vec4(color,uAlpha);
-        }
-      `,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
       transparent: true
     })
     this.plane = new THREE.Mesh(this.geometry, this.material)

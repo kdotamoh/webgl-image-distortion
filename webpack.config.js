@@ -40,6 +40,11 @@ module.exports = {
         use: ['file-loader']
       },
       {
+        test: /\.(glsl|vs|fs|vert|frag)$/,
+        exclude: /node_modules/,
+        use: ['raw-loader', 'glslify-loader']
+      },
+      {
         test: /\.js$/,
         use: 'babel-loader',
         exclude: /node_modules/
