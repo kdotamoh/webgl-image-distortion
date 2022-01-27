@@ -36,6 +36,6 @@
   "dependencies": {
     "gsap": "^3.2.0",
     "imagesloaded": "^4.1.4",
-    "three": "^0.113.2"
+    "three": "^0.137.0"
   }
 }
